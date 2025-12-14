@@ -1,0 +1,103 @@
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using University_System.UniversityManagementSystem.Core.Entities;
+using University_System.UniversityManagementSystem.Core.Interfaces;
+using University_System.UniversityManagementSystem.Core.Models.TeachersDtos;
+using University_System.UniversityManagementSystem.Infrastructure.Data;
+
+namespace University_System.UniversityManagementSystem.Core.Services
+{
+    public class TeacherService : ITeacherService
+    {
+        private readonly UniversityIdentityDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public TeacherService(
+            UniversityIdentityDbContext context,
+            UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
+
+        public async Task<IEnumerable<TeacherDetailsDto>> GetAllAsync()
+        {
+            return await _context.Teachers
+                .Select(t => new TeacherDetailsDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Title = t.Title,
+                    Phone = t.Phone,
+                    Email = t.Email,
+                    Department = t.Department
+                })
+                .ToListAsync();
+        }
+
+        public async Task<TeacherDetailsDto?> GetByIdAsync(int id)
+        {
+            return await _context.Teachers
+                .Where(t => t.Id == id)
+                .Select(t => new TeacherDetailsDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Title = t.Title,
+                    Phone = t.Phone,
+                    Email = t.Email,
+                    Department = t.Department
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> CreateAsync(TeacherCreateDto dto)
+        {
+            // 🔒 ВАЖНО: проверка за UserId
+            var user = await _userManager.FindByIdAsync(dto.UserId);
+            if (user == null)
+                throw new ArgumentException("Invalid UserId");
+
+            var teacher = new Teacher
+            {
+                Name = dto.Name,
+                Title = dto.Title,
+                Phone = dto.Phone,
+                Email = dto.Email,
+                Department = dto.Department,
+                UserId = dto.UserId
+            };
+
+            _context.Teachers.Add(teacher);
+            await _context.SaveChangesAsync();
+
+            return teacher.Id;
+        }
+
+        public async Task<bool> UpdateAsync(int id, TeacherUpdateDto dto)
+        {
+            var teacher = await _context.Teachers.FindAsync(id);
+            if (teacher == null) return false;
+
+            teacher.Name = dto.Name;
+            teacher.Title = dto.Title;
+            teacher.Phone = dto.Phone;
+            teacher.Email = dto.Email;
+            teacher.Department = dto.Department;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var teacher = await _context.Teachers.FindAsync(id);
+            if (teacher == null) return false;
+
+            teacher.IsDeleted=true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+    }
+
+}
