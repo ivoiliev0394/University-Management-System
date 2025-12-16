@@ -2,7 +2,11 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const canSeeUsers =
+    user?.roles?.includes('Admin') ||
+    user?.roles?.includes('Teacher');
 
   return (
     <nav>
@@ -10,24 +14,40 @@ export default function Header() {
 
       {isAuthenticated && (
         <>
-          {" | "}
+          {' | '}
           <Link to="/students">Students</Link>
-          {" | "}
-          <button onClick={logout} style={{ cursor: 'pointer' }}>
-            Logout
-          </button>
+
+          {canSeeUsers && (
+            <>
+              {' | '}
+              <Link to="/users">Users</Link>
+              {' | '}
+              <Link to="/teachers">Teachers</Link>
+              {' | '}
+              <Link to="/disciplines">Disciplines</Link>
+              {' | '}
+              <Link to="/grades">Grades</Link>
+            </>
+          )}
+
+          {' | '}
+          <Link to="/profile">My Profile</Link>
+
+          {' | '}
+          <button onClick={logout}>Logout</button>
         </>
       )}
 
       {!isAuthenticated && (
         <>
-          {" | "}
+          {' | '}
           <Link to="/login">Login</Link>
-          {" | "}
+          {' | '}
           <Link to="/register">Register</Link>
         </>
       )}
     </nav>
   );
 }
+
 

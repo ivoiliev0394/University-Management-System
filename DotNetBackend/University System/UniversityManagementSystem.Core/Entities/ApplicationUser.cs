@@ -11,6 +11,7 @@ namespace University_System.UniversityManagementSystem.Core.Entities
 
         [MaxLength(50)]
         public string? LastName { get; set; }
+        public DateTime CreatedOn { get; set; }
         public bool IsDeactivated { get; set; } = false;
     }
 }

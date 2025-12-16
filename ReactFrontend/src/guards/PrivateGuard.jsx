@@ -2,11 +2,12 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function PrivateGuard({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { token } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!token) {
+    return <Navigate to="/login" />;
   }
 
   return children;
 }
+

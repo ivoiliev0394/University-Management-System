@@ -12,7 +12,7 @@ using University_System.UniversityManagementSystem.Infrastructure.Data;
 namespace University_System.Migrations
 {
     [DbContext(typeof(UniversityIdentityDbContext))]
-    [Migration("20251214164559_Initial")]
+    [Migration("20251216182925_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -170,6 +170,9 @@ namespace University_System.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -294,8 +297,7 @@ namespace University_System.Migrations
 
                     b.HasIndex("DisciplineId");
 
-                    b.HasIndex("StudentId", "DisciplineId")
-                        .IsUnique();
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Grades");
                 });

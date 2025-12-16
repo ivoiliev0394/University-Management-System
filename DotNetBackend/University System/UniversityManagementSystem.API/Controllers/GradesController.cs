@@ -6,7 +6,7 @@ using University_System.UniversityManagementSystem.Core.Models.GradesDtos;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
-    
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GradesController : ControllerBase

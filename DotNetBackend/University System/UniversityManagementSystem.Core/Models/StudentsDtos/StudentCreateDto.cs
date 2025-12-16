@@ -4,30 +4,40 @@ namespace University_System.UniversityManagementSystem.Core.Models.StudentsDtos
 {
     public class StudentCreateDto
     {
+        // ===== Identity =====
         [Required]
-        public string FacultyNumber { get; set; } = null!;
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string FirstName { get; set; } = null!;
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+
+        // ===== Profile =====
         [Required]
-        public string MiddleName { get; set; } = null!; // ✅
+        [MaxLength(20)]
+        public string FacultyNumber { get; set; } = string.Empty;
 
         [Required]
-        public string LastName { get; set; } = null!;
+        [MaxLength(50)]
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
-        public string Major { get; set; } = null!;
+        [MaxLength(50)]
+        public string MiddleName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string Major { get; set; } = string.Empty;
 
         [Range(1, 6)]
         public int Course { get; set; }
 
-        [Required, EmailAddress]
-        public string Email { get; set; } = null!;
-
-        public string? Address { get; set; }
-
-        // 🔴 КЛЮЧОВО
-        [Required]
-        public string UserId { get; set; } = null!;
+        [MaxLength(200)]
+        public string Address { get; set; } = string.Empty;
     }
 }

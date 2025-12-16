@@ -12,9 +12,7 @@ namespace University_System.UniversityManagementSystem.Core.Services
         private readonly UniversityIdentityDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TeacherService(
-            UniversityIdentityDbContext context,
-            UserManager<ApplicationUser> userManager)
+        public TeacherService(UniversityIdentityDbContext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -51,13 +49,25 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> CreateAsync(TeacherCreateDto dto)
+        public async Task<TeacherResponseDto> CreateAsync(TeacherCreateDto dto)
         {
-            // 🔒 ВАЖНО: проверка за UserId
-            var user = await _userManager.FindByIdAsync(dto.UserId);
-            if (user == null)
-                throw new ArgumentException("Invalid UserId");
+            // 1️⃣ Create Identity User
+            var user = new ApplicationUser
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                CreatedOn = DateTime.UtcNow
+            };  
 
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                throw new Exception(string.Join("; ",
+                    result.Errors.Select(e => e.Description)));
+
+            // 2️⃣ Assign Teacher role
+            await _userManager.AddToRoleAsync(user, "Teacher");
+
+            // 3️⃣ Create Teacher profile
             var teacher = new Teacher
             {
                 Name = dto.Name,
@@ -65,14 +75,22 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 Phone = dto.Phone,
                 Email = dto.Email,
                 Department = dto.Department,
-                UserId = dto.UserId
+                UserId = user.Id
             };
 
             _context.Teachers.Add(teacher);
             await _context.SaveChangesAsync();
 
-            return teacher.Id;
+            return new TeacherResponseDto 
+            {
+                Id = teacher.Id,
+                Name = teacher.Name,
+                Title = teacher.Title,
+                Email = teacher.Email,
+                Department = teacher.Department
+            };
         }
+
 
         public async Task<bool> UpdateAsync(int id, TeacherUpdateDto dto)
         {

@@ -47,6 +47,12 @@ namespace University_System.UniversityManagementSystem.Infrastructure.Seed
                 password: "Admin123!",
                 role: "Admin"
             );
+            await CreateUserIfNotExistsAsync(
+                userManager,
+                email: "ivo@gmail.com",
+                password: "Ivo123!",
+                role: "Admin"
+            );
         }
 
         private static async Task SeedTeachersAsync(UserManager<ApplicationUser> userManager)
@@ -80,29 +86,36 @@ namespace University_System.UniversityManagementSystem.Infrastructure.Seed
         // ======================================================
 
         private static async Task CreateUserIfNotExistsAsync(
-            UserManager<ApplicationUser> userManager,
-            string email,
-            string password,
-            string role)
+    UserManager<ApplicationUser> userManager,
+    string email,
+    string password,
+    string role)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if (user != null) return;
 
-            user = new ApplicationUser
+            if (user == null)
             {
-                UserName = email,
-                Email = email,
-                EmailConfirmed = true
-            };
-
-            var result = await userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                if (!await userManager.IsInRoleAsync(user, role))
+                user = new ApplicationUser
                 {
-                    await userManager.AddToRoleAsync(user, role);
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    CreatedOn = DateTime.UtcNow
+                };
+
+                var result = await userManager.CreateAsync(user, password);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    throw new Exception($"Failed to create user {email}: {errors}");
                 }
+            }
+
+            // ✅ Това трябва да се изпълнява ВИНАГИ
+            if (!await userManager.IsInRoleAsync(user, role))
+            {
+                await userManager.AddToRoleAsync(user, role);
             }
         }
     }

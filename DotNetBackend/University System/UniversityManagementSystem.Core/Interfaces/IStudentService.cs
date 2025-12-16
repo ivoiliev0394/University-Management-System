@@ -6,7 +6,7 @@ namespace University_System.UniversityManagementSystem.Core.Interfaces
     {
         Task<IEnumerable<StudentListDto>> GetAllAsync();
         Task<StudentDetailsDto?> GetByIdAsync(int id);
-        Task<int> CreateAsync(StudentCreateDto dto);
+        Task<StudentResponseDto> CreateAsync(StudentCreateDto dto);
         Task<bool> UpdateAsync(int id, StudentUpdateDto dto);
         Task<bool> DeleteAsync(int id);
     }

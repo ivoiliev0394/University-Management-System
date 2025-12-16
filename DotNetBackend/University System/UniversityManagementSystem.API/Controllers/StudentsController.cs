@@ -9,7 +9,7 @@ using University_System.UniversityManagementSystem.Infrastructure.Data;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
-   
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase
@@ -37,14 +37,21 @@ namespace University_System.UniversityManagementSystem.API.Controllers
 
             return Ok(student);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateStudent(StudentCreateDto dto)
         {
-            var id = await _studentService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetStudent), new { id }, null);
+            var student = await _studentService.CreateAsync(dto);
+
+            return CreatedAtAction(
+                nameof(GetStudent),
+                new { id = student.Id },
+                student
+            );
         }
 
+
+        [Authorize(Roles = "Admin,Teacher")]
         // PUT: api/Students/5
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudent(int id, StudentUpdateDto dto)
@@ -56,7 +63,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
 
             return NoContent();
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id)

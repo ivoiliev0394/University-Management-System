@@ -48,7 +48,7 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> CreateAsync(DisciplineCreateDto dto)
+        public async Task<DisciplineResponseDto> CreateAsync(DisciplineCreateDto dto)
         {
             var discipline = new Discipline
             {
@@ -61,7 +61,14 @@ namespace University_System.UniversityManagementSystem.Core.Services
             _context.Disciplines.Add(discipline);
             await _context.SaveChangesAsync();
 
-            return discipline.Id;
+            return new DisciplineResponseDto
+            {
+                Id = discipline.Id,
+                Name = discipline.Name,
+                Semester = discipline.Semester,
+                Credits = discipline.Credits,
+                TeacherId = discipline.TeacherId
+            };
         }
 
         public async Task<bool> UpdateAsync(int id, DisciplineUpdateDto dto)

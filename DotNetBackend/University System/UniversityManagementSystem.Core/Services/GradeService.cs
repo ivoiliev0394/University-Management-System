@@ -15,12 +15,12 @@ namespace University_System.UniversityManagementSystem.Core.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<GradeReadDto>> GetAllAsync()
+        public async Task<IEnumerable<GradeDetailsDto>> GetAllAsync()
         {
             return await _context.Grades
                 .Include(g => g.Student)
                 .Include(g => g.Discipline)
-                .Select(g => new GradeReadDto
+                .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
                     StudentName = g.Student.FirstName + " " + g.Student.LastName,
@@ -31,21 +31,26 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<GradeReadDto?> GetByIdAsync(int id)
+        public async Task<GradeDetailsDto?> GetByIdAsync(int id)
         {
-            return await _context.Grades
-                .Include(g => g.Student)
-                .Include(g => g.Discipline)
-                .Where(g => g.Id == id)
-                .Select(g => new GradeReadDto
-                {
-                    Id = g.Id,
-                    StudentName = g.Student.FirstName + " " + g.Student.LastName,
-                    DisciplineName = g.Discipline.Name,
-                    Value = g.Value,
-                    Date = g.Date
-                })
-                .FirstOrDefaultAsync();
+            var grade = await _context.Grades
+               .Include(g => g.Student)
+               .Include(g => g.Discipline)
+               .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (grade == null)
+                throw new ArgumentException("Grade not found");
+
+            return new GradeDetailsDto
+            {
+                Id = grade.Id,
+                StudentId = grade.StudentId,
+                StudentName = grade.Student.FirstName + " " + grade.Student.LastName,
+                DisciplineId = grade.DisciplineId,
+                DisciplineName = grade.Discipline.Name,
+                Value = grade.Value,
+                Date = grade.Date
+            };
         }
 
         public async Task<int> CreateAsync(GradeCreateDto dto)
@@ -55,7 +60,7 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 StudentId = dto.StudentId,
                 DisciplineId = dto.DisciplineId,
                 Value = dto.Value,
-                Date = dto.Date
+                Date = DateTime.UtcNow
             };
 
             _context.Grades.Add(grade);
@@ -72,7 +77,7 @@ namespace University_System.UniversityManagementSystem.Core.Services
             grade.StudentId = dto.StudentId;
             grade.DisciplineId = dto.DisciplineId;
             grade.Value = dto.Value;
-            grade.Date = dto.Date;
+            grade.Date = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
             return true;
@@ -88,12 +93,12 @@ namespace University_System.UniversityManagementSystem.Core.Services
             return true;
         }
 
-        public async Task<IEnumerable<GradeReadDto>> GetByStudentAsync(int studentId)
+        public async Task<IEnumerable<GradeDetailsDto>> GetByStudentAsync(int studentId)
         {
             return await _context.Grades
                 .Where(g => g.StudentId == studentId)
                 .Include(g => g.Discipline)
-                .Select(g => new GradeReadDto
+                .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
                     StudentName = "",
@@ -104,12 +109,12 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<GradeReadDto>> GetByDisciplineAsync(int disciplineId)
+        public async Task<IEnumerable<GradeDetailsDto>> GetByDisciplineAsync(int disciplineId)
         {
             return await _context.Grades
                 .Where(g => g.DisciplineId == disciplineId)
                 .Include(g => g.Student)
-                .Select(g => new GradeReadDto
+                .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
                     StudentName = g.Student.FirstName + " " + g.Student.LastName,

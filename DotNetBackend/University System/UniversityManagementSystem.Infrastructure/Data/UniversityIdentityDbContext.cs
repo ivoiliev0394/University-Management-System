@@ -32,9 +32,9 @@ namespace University_System.UniversityManagementSystem.Infrastructure.Data
             // GRADE
             // =========================
 
-            modelBuilder.Entity<Grade>()
-                .HasIndex(g => new { g.StudentId, g.DisciplineId })
-                .IsUnique();
+            //modelBuilder.Entity<Grade>()
+            //    .HasIndex(g => new { g.StudentId, g.DisciplineId })
+            //    .IsUnique();
 
             modelBuilder.Entity<Grade>()
                 .Property(g => g.Value)

@@ -167,6 +167,9 @@ namespace University_System.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -291,8 +294,7 @@ namespace University_System.Migrations
 
                     b.HasIndex("DisciplineId");
 
-                    b.HasIndex("StudentId", "DisciplineId")
-                        .IsUnique();
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Grades");
                 });

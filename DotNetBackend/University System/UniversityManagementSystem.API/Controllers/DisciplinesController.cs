@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using University_System.UniversityManagementSystem.Core.Interfaces;
 using University_System.UniversityManagementSystem.Core.Models.DisciplinesDtos;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class DisciplinesController : ControllerBase
@@ -29,8 +31,13 @@ namespace University_System.UniversityManagementSystem.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DisciplineCreateDto dto)
         {
-            var id = await _disciplineService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id }, null);
+            var discipline = await _disciplineService.CreateAsync(dto);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = discipline.Id },
+                discipline
+            );
         }
 
         [HttpPut("{id}")]

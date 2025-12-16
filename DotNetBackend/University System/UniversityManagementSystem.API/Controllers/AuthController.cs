@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using University_System.UniversityManagementSystem.Core.Entities;
 using University_System.UniversityManagementSystem.Core.Models.AuthDtos;
+using University_System.UniversityManagementSystem.Infrastructure.Data;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
@@ -16,17 +17,26 @@ namespace University_System.UniversityManagementSystem.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _config;
+        private readonly UniversityIdentityDbContext _context;
 
-        public AuthController( UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager,IConfiguration config)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration config,
+            UniversityIdentityDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _config = config;
+            _context = context;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterRequest model)
+        public async Task<IActionResult> Register(RegisterRequestStudent model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (!await _roleManager.RoleExistsAsync(model.Role))
                 await _roleManager.CreateAsync(new IdentityRole(model.Role));
 
@@ -42,9 +52,27 @@ namespace University_System.UniversityManagementSystem.API.Controllers
 
             await _userManager.AddToRoleAsync(user, model.Role);
 
-            return Ok("User registered");
+            // 🔴 CREATE STUDENT PROFILE
+            var student = new Student
+            {
+                UserId = user.Id,
+                FacultyNumber = model.FacultyNumber,
+                FirstName = model.FirstName,
+                MiddleName = model.MiddleName,
+                LastName = model.LastName,
+                Major = model.Major,
+                Course = model.Course,
+                Email = model.StudentEmail,
+                Address = model.Address
+            };
+
+            _context.Students.Add(student);
+            await _context.SaveChangesAsync();
+
+            return Ok("User and student profile registered successfully");
         }
 
+        // LOGIN си остава същия (много е добре написан)
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest model)
         {
@@ -83,9 +111,15 @@ namespace University_System.UniversityManagementSystem.API.Controllers
 
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                user = new
+                {
+                    id = user.Id,
+                    email = user.Email,
+                    roles = roles
+                }
             });
         }
     }
-
 }
+

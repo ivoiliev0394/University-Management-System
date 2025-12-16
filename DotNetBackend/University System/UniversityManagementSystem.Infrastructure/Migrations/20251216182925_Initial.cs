@@ -32,6 +32,7 @@ namespace University_System.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDeactivated = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -314,10 +315,9 @@ namespace University_System.Migrations
                 column: "DisciplineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Grades_StudentId_DisciplineId",
+                name: "IX_Grades_StudentId",
                 table: "Grades",
-                columns: new[] { "StudentId", "DisciplineId" },
-                unique: true);
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_FacultyNumber",

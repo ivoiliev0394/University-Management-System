@@ -4,22 +4,28 @@ namespace University_System.UniversityManagementSystem.Core.Models.TeachersDtos
 {
     public class TeacherCreateDto
     {
-        [Required, StringLength(100)]
-        public string Name { get; set; } = null!;
-
-        [Required, StringLength(50)]
-        public string Title { get; set; } = null!;
-
-        [Required, Phone]
-        public string Phone { get; set; } = null!;
-
-        [Required, EmailAddress]
-        public string Email { get; set; } = null!;
-
-        [Required, StringLength(100)]
-        public string Department { get; set; } = null!;
+        // ===== Identity =====
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string UserId { get; set; } = null!;
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+
+        // ===== Profile =====
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string Title { get; set; } = string.Empty;
+
+        [MaxLength(100)]
+        public string Department { get; set; } = string.Empty;
+
+        [Phone]
+        public string Phone { get; set; } = string.Empty;
     }
 }
+

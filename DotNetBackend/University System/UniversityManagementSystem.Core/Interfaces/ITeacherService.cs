@@ -6,7 +6,7 @@ namespace University_System.UniversityManagementSystem.Core.Interfaces
     {
         Task<IEnumerable<TeacherDetailsDto>> GetAllAsync();
         Task<TeacherDetailsDto?> GetByIdAsync(int id);
-        Task<int> CreateAsync(TeacherCreateDto dto);
+        Task<TeacherResponseDto> CreateAsync(TeacherCreateDto dto);
         Task<bool> UpdateAsync(int id, TeacherUpdateDto dto);
         Task<bool> DeleteAsync(int id);
     }

@@ -9,7 +9,7 @@ using University_System.UniversityManagementSystem.Infrastructure.Data;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
-   
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TeachersController : ControllerBase
@@ -35,11 +35,15 @@ namespace University_System.UniversityManagementSystem.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTeacher([FromBody] TeacherCreateDto dto)
         {
-            var id = await _teacherService.CreateAsync(dto);
-            if (id == null)
-                return BadRequest("Invalid UserId");
-            return CreatedAtAction(nameof(GetTeacher), new { id }, null);
+            var teacher = await _teacherService.CreateAsync(dto);
+
+            return CreatedAtAction(
+                nameof(GetTeacher),
+                new { id = teacher.Id },
+                teacher
+            );
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTeacher(int id, [FromBody] TeacherUpdateDto dto)

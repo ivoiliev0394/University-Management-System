@@ -6,7 +6,7 @@ namespace University_System.UniversityManagementSystem.Core.Interfaces
     {
         Task<IEnumerable<DisciplineReadDto>> GetAllAsync();
         Task<DisciplineReadDto?> GetByIdAsync(int id);
-        Task<int> CreateAsync(DisciplineCreateDto dto);
+        Task<DisciplineResponseDto> CreateAsync(DisciplineCreateDto dto);
         Task<bool> UpdateAsync(int id, DisciplineUpdateDto dto);
         Task<bool> DeleteAsync(int id);
     }

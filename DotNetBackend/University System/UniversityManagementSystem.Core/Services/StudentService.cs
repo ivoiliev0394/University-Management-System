@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using University_System.UniversityManagementSystem.Core.Entities;
 using University_System.UniversityManagementSystem.Core.Interfaces;
 using University_System.UniversityManagementSystem.Core.Models;
@@ -11,10 +12,11 @@ namespace University_System.UniversityManagementSystem.Core.Services
     public class StudentService : IStudentService
     {
         private readonly UniversityIdentityDbContext _context;
-
-        public StudentService(UniversityIdentityDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public StudentService(UniversityIdentityDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IEnumerable<StudentListDto>> GetAllAsync()
@@ -64,8 +66,25 @@ namespace University_System.UniversityManagementSystem.Core.Services
             };
         }
 
-        public async Task<int> CreateAsync(StudentCreateDto dto)
+        public async Task<StudentResponseDto> CreateAsync(StudentCreateDto dto)
         {
+            // 1️⃣ Create Identity User
+            var user = new ApplicationUser
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                CreatedOn = DateTime.UtcNow
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                throw new Exception(string.Join("; ",
+                    result.Errors.Select(e => e.Description)));
+
+            // 2️⃣ Assign Student role
+            await _userManager.AddToRoleAsync(user, "Student");
+
+            // 3️⃣ Create Student profile
             var student = new Student
             {
                 FacultyNumber = dto.FacultyNumber,
@@ -76,14 +95,23 @@ namespace University_System.UniversityManagementSystem.Core.Services
                 Course = dto.Course,
                 Email = dto.Email,
                 Address = dto.Address,
-                UserId = dto.UserId
+                UserId = user.Id
             };
 
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            return student.Id;
+            return new StudentResponseDto
+            {
+                Id = student.Id,
+                FacultyNumber = student.FacultyNumber,
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                Email = student.Email
+            };
         }
+
+
         public async Task<bool> UpdateAsync(int id, StudentUpdateDto dto)
         {
             var student = await _context.Students.FindAsync(id);

@@ -7,7 +7,7 @@ using University_System.UniversityManagementSystem.Core.Models.ReportsDtos;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
-    
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
