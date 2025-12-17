@@ -7,7 +7,7 @@ using University_System.UniversityManagementSystem.Core.Models.ReportsDtos;
 
 namespace University_System.UniversityManagementSystem.API.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
@@ -19,6 +19,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             _reportService = reportService;
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         // 1️⃣ Академична справка за студент
         // GET: api/reports/student/5
         [HttpGet("student/{studentId}")]
@@ -32,7 +33,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             return Ok(result);
 
         }
-
+        [Authorize]
         // 2️⃣ Среден успех за дисциплина
         // GET: api/reports/discipline-average/3
         [HttpGet("discipline-average/{disciplineId}")]
@@ -45,7 +46,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
 
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         // 3️⃣ Среден успех по специалност и курс
         // GET: api/reports/average-by-major-course?major=Software Engineering&course=3
         [HttpGet("average-by-major-course")]
@@ -58,7 +59,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             return Ok(result);
         }
 
-
+        [Authorize(Roles = "Admin,Teacher")]
         // 4️⃣ Top 3 отличници по дисциплина
         // GET: api/reports/top-students/2
         [HttpGet("top-students/{disciplineId}")]
@@ -68,6 +69,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Teacher")]
         // 5️⃣ Студенти с успех над 5.00 за дипломна
         // GET: api/reports/eligible-for-diploma?major=Software Engineering
         [HttpGet("eligible-for-diploma")]

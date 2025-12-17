@@ -20,13 +20,13 @@ namespace University_System.UniversityManagementSystem.API.Controllers
         {
             _studentService = studentService;
         }
-
+        [Authorize(Roles = "Admin,Teacher,Student")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentListDto>>> GetStudents()
         {
             return Ok(await _studentService.GetAllAsync());
         }
-
+        [Authorize(Roles = "Admin,Teacher,Student")]
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentDetailsDto>> GetStudent(int id)
         {

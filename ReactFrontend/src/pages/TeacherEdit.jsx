@@ -24,51 +24,92 @@ export default function TeacherEdit() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     try {
       await updateTeacher(id, form);
       navigate('/teachers');
     } catch (err) {
-      setError(err.message || 'Error');
+      setError(err.message || 'Error while saving');
     }
   };
 
   if (!form) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h1>Edit Teacher</h1>
+    <div className="container">
+      <h1 className="mb-3">Edit Teacher</h1>
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {/* 🔙 Back */}
+      <button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>Name</label><br />
-          <input name="name" value={form.name} onChange={onChange} required />
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      <form onSubmit={onSubmit} className="col-md-6">
+        <div className="mb-3">
+          <label className="form-label">Name</label>
+          <input
+            name="name"
+            className="form-control"
+            value={form.name || ''}
+            onChange={onChange}
+            required
+          />
         </div>
 
-        <div>
-          <label>Title</label><br />
-          <input name="title" value={form.title} onChange={onChange} required />
+        <div className="mb-3">
+          <label className="form-label">Title</label>
+          <input
+            name="title"
+            className="form-control"
+            value={form.title || ''}
+            onChange={onChange}
+            required
+          />
         </div>
 
-        <div>
-          <label>Department</label><br />
-          <input name="department" value={form.department} onChange={onChange} required />
+        <div className="mb-3">
+          <label className="form-label">Department</label>
+          <input
+            name="department"
+            className="form-control"
+            value={form.department || ''}
+            onChange={onChange}
+            required
+          />
         </div>
 
-        <div>
-          <label>Email</label><br />
-          <input type="email" name="email" value={form.email} onChange={onChange} required />
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            type="email"
+            name="email"
+            className="form-control"
+            value={form.email || ''}
+            onChange={onChange}
+            required
+          />
         </div>
 
-        <div>
-          <label>Phone</label><br />
-          <input name="phone" value={form.phone} onChange={onChange} required />
+        <div className="mb-3">
+          <label className="form-label">Phone</label>
+          <input
+            name="phone"
+            className="form-control"
+            value={form.phone || ''}
+            onChange={onChange}
+            required
+          />
         </div>
 
-        <br />
-        <button type="submit">Save</button>
+        <button type="submit" className="btn btn-primary">
+          Save Changes
+        </button>
       </form>
     </div>
   );

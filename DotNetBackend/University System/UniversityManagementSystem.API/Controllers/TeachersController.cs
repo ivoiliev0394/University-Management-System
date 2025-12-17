@@ -20,18 +20,19 @@ namespace University_System.UniversityManagementSystem.API.Controllers
         {
             _teacherService = teacherService;
         }
-
+        [Authorize(Roles = "Admin,Teacher,Student")]
         [HttpGet]
         public async Task<IActionResult> GetTeachers()
             => Ok(await _teacherService.GetAllAsync());
 
+        [Authorize(Roles = "Admin,Teacher,Student")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTeacher(int id)
         {
             var teacher = await _teacherService.GetByIdAsync(id);
             return teacher == null ? NotFound() : Ok(teacher);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateTeacher([FromBody] TeacherCreateDto dto)
         {
@@ -44,14 +45,14 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             );
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTeacher(int id, [FromBody] TeacherUpdateDto dto)
         {
             var updated = await _teacherService.UpdateAsync(id, dto);
             return updated ? NoContent() : NotFound();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTeacher(int id)
         {

@@ -8,28 +8,56 @@ export default function Users() {
 
   useEffect(() => {
     getAllUsers()
-      .then(data => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      .then(data => setUsers(data))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <p>Loading users...</p>;
 
   return (
-    <div>
-      <h1>Users</h1>
+    <div className="container">
+      <h1 className="mb-3">Users</h1>
 
-      <ul>
-        {users.map(u => (
-          <li key={u.id}>
-            {u.email} ({u.role})
-            {' '}
-            <Link to={`/profile/${u.id}`}>View profile</Link>
-          </li>
-        ))}
-      </ul>
+      <table className="table table-striped table-bordered align-middle">
+        <thead className="table-dark">
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th style={{ width: '180px' }}>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {users.map(u => (
+            <tr key={u.id}>
+              <td>{u.email}</td>
+
+              <td>
+                <span
+                  className={`badge ${
+                    u.role === 'Admin'
+                      ? 'bg-danger'
+                      : u.role === 'Teacher'
+                      ? 'bg-primary'
+                      : 'bg-secondary'
+                  }`}
+                >
+                  {u.role}
+                </span>
+              </td>
+
+              <td>
+                <Link
+                  to={`/profile/${u.id}`}
+                  className="btn btn-info btn-sm"
+                >
+                  View Profile
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

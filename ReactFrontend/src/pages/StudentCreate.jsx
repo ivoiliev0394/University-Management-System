@@ -39,26 +39,128 @@ export default function StudentCreate() {
   };
 
   return (
-    <div>
-      <h1>Create Student</h1>
+    <div className="container">
+      <h1 className="mb-3">Create Student</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* 🔙 Back */}
+      <button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
 
-      <form onSubmit={onSubmit}>
-        <input name="email" placeholder="Email" onChange={onChange} required /> <br /> <br />
-        <input name="password" type="password" placeholder="Password" onChange={onChange} required /> <br /> <br />
+      {error && <div className="alert alert-danger">{error}</div>}
 
-        <input name="facultyNumber" placeholder="Faculty Number" onChange={onChange} required /> <br /> <br />
-        <input name="firstName" placeholder="First Name" onChange={onChange} required /> <br /> <br />
-        <input name="middleName" placeholder="Middle Name" onChange={onChange} required /> <br /> <br />
-        <input name="lastName" placeholder="Last Name" onChange={onChange} required /> <br /> <br />
-        <input name="major" placeholder="Major" onChange={onChange} required /> <br /> <br />
-        <input name="course" type="number" min="1" max="6" onChange={onChange} required /> <br /> <br />
-        <input name="address" placeholder="Address" onChange={onChange} /> <br /> <br />
+      <form onSubmit={onSubmit} className="col-md-6">
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="form-control"
+            value={form.email}
+            onChange={onChange}
+            required
+          />
+        </div>
 
-        <button type="submit">Create</button>
+        <div className="mb-3">
+          <label className="form-label">Password</label>
+          <input
+            name="password"
+            type="password"
+            className="form-control"
+            value={form.password}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <hr />
+
+        <div className="mb-3">
+          <label className="form-label">Faculty Number</label>
+          <input
+            name="facultyNumber"
+            className="form-control"
+            value={form.facultyNumber}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">First Name</label>
+          <input
+            name="firstName"
+            className="form-control"
+            value={form.firstName}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Middle Name</label>
+          <input
+            name="middleName"
+            className="form-control"
+            value={form.middleName}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Last Name</label>
+          <input
+            name="lastName"
+            className="form-control"
+            value={form.lastName}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Major</label>
+          <input
+            name="major"
+            className="form-control"
+            value={form.major}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Course</label>
+          <input
+            type="number"
+            name="course"
+            min="1"
+            max="6"
+            className="form-control"
+            value={form.course}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Address</label>
+          <input
+            name="address"
+            className="form-control"
+            value={form.address}
+            onChange={onChange}
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary">
+          Create Student
+        </button>
       </form>
     </div>
   );
 }
-

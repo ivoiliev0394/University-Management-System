@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../api/authApi';
-import { useEffect } from 'react';
 
 export default function Login() {
   const { login, isAuthenticated } = useAuth();
@@ -12,50 +11,68 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     try {
       const authData = await loginApi(email, password);
       login(authData);
       navigate('/');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Login failed');
     }
   };
 
-  useEffect(() => {
-  if (isAuthenticated) {
-    navigate('/');
-  }
-}, [isAuthenticated, navigate]);
-
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="container d-flex justify-content-center align-items-center"
+         style={{ minHeight: '70vh' }}>
+      
+      <div className="card shadow p-4" style={{ width: '100%', maxWidth: '400px' }}>
+        <h2 className="text-center mb-4">Login</h2>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && (
+          <div className="alert alert-danger text-center">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <form onSubmit={onSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit" className="btn btn-primary w-100">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

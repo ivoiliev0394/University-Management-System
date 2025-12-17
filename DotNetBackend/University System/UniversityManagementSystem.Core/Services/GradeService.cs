@@ -15,15 +15,19 @@ namespace University_System.UniversityManagementSystem.Core.Services
             _context = context;
         }
 
+        // ===================== ADMIN =====================
         public async Task<IEnumerable<GradeDetailsDto>> GetAllAsync()
         {
             return await _context.Grades
+                .Where(g => !g.IsDeleted)
                 .Include(g => g.Student)
                 .Include(g => g.Discipline)
                 .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
+                    StudentId = g.StudentId,
                     StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                    DisciplineId = g.DisciplineId,
                     DisciplineName = g.Discipline.Name,
                     Value = g.Value,
                     Date = g.Date
@@ -33,23 +37,23 @@ namespace University_System.UniversityManagementSystem.Core.Services
 
         public async Task<GradeDetailsDto?> GetByIdAsync(int id)
         {
-            var grade = await _context.Grades
-               .Include(g => g.Student)
-               .Include(g => g.Discipline)
-               .FirstOrDefaultAsync(g => g.Id == id);
+            var g = await _context.Grades
+                .Where(x => !x.IsDeleted && x.Id == id)
+                .Include(x => x.Student)
+                .Include(x => x.Discipline)
+                .FirstOrDefaultAsync();
 
-            if (grade == null)
-                throw new ArgumentException("Grade not found");
+            if (g == null) return null;
 
             return new GradeDetailsDto
             {
-                Id = grade.Id,
-                StudentId = grade.StudentId,
-                StudentName = grade.Student.FirstName + " " + grade.Student.LastName,
-                DisciplineId = grade.DisciplineId,
-                DisciplineName = grade.Discipline.Name,
-                Value = grade.Value,
-                Date = grade.Date
+                Id = g.Id,
+                StudentId = g.StudentId,
+                StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                DisciplineId = g.DisciplineId,
+                DisciplineName = g.Discipline.Name,
+                Value = g.Value,
+                Date = g.Date
             };
         }
 
@@ -65,13 +69,12 @@ namespace University_System.UniversityManagementSystem.Core.Services
 
             _context.Grades.Add(grade);
             await _context.SaveChangesAsync();
-
             return grade.Id;
         }
 
         public async Task<bool> UpdateAsync(int id, GradeUpdateDto dto)
         {
-            var grade = await _context.Grades.FindAsync(id);
+            var grade = await _context.Grades.FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
             if (grade == null) return false;
 
             grade.StudentId = dto.StudentId;
@@ -85,7 +88,7 @@ namespace University_System.UniversityManagementSystem.Core.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var grade = await _context.Grades.FindAsync(id);
+            var grade = await _context.Grades.FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
             if (grade == null) return false;
 
             grade.IsDeleted = true;
@@ -93,15 +96,96 @@ namespace University_System.UniversityManagementSystem.Core.Services
             return true;
         }
 
-        public async Task<IEnumerable<GradeDetailsDto>> GetByStudentAsync(int studentId)
+        // ===================== TEACHER ONLY (by discipline ownership) =====================
+        public async Task<IEnumerable<GradeDetailsDto>> GetAllForTeacherAsync(string teacherUserId)
         {
             return await _context.Grades
-                .Where(g => g.StudentId == studentId)
+                .Where(g => !g.IsDeleted && g.Discipline.Teacher.UserId == teacherUserId)
+                .Include(g => g.Student)
                 .Include(g => g.Discipline)
                 .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
-                    StudentName = "",
+                    StudentId = g.StudentId,
+                    StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                    DisciplineId = g.DisciplineId,
+                    DisciplineName = g.Discipline.Name,
+                    Value = g.Value,
+                    Date = g.Date
+                })
+                .ToListAsync();
+        }
+
+        public async Task<GradeDetailsDto?> GetByIdForTeacherAsync(int id, string teacherUserId)
+        {
+            var g = await _context.Grades
+                .Where(x => !x.IsDeleted && x.Id == id && x.Discipline.Teacher.UserId == teacherUserId)
+                .Include(x => x.Student)
+                .Include(x => x.Discipline)
+                .FirstOrDefaultAsync();
+
+            if (g == null) return null;
+
+            return new GradeDetailsDto
+            {
+                Id = g.Id,
+                StudentId = g.StudentId,
+                StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                DisciplineId = g.DisciplineId,
+                DisciplineName = g.Discipline.Name,
+                Value = g.Value,
+                Date = g.Date
+            };
+        }
+
+        public async Task<bool> UpdateForTeacherAsync(int id, GradeUpdateDto dto, string teacherUserId)
+        {
+            var grade = await _context.Grades
+                .Include(g => g.Discipline)
+                .ThenInclude(d => d.Teacher)
+                .FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
+
+            if (grade == null) return false;
+            if (grade.Discipline.Teacher.UserId != teacherUserId) return false;
+
+            // Teacher може да променя стойност/студент, но дисциплината НЕ е безопасно да се сменя към чужда.
+            // Ако искаш да позволим смяна на дисциплина, трябва да проверим и новата дисциплина да е негова.
+            grade.StudentId = dto.StudentId;
+            grade.Value = dto.Value;
+            grade.Date = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteForTeacherAsync(int id, string teacherUserId)
+        {
+            var grade = await _context.Grades
+                .Include(g => g.Discipline)
+                .ThenInclude(d => d.Teacher)
+                .FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
+
+            if (grade == null) return false;
+            if (grade.Discipline.Teacher.UserId != teacherUserId) return false;
+
+            grade.IsDeleted = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // ===================== FILTERS (admin/teacher use if you want) =====================
+        public async Task<IEnumerable<GradeDetailsDto>> GetByStudentAsync(int studentId)
+        {
+            return await _context.Grades
+                .Where(g => !g.IsDeleted && g.StudentId == studentId)
+                .Include(g => g.Student)
+                .Include(g => g.Discipline)
+                .Select(g => new GradeDetailsDto
+                {
+                    Id = g.Id,
+                    StudentId = g.StudentId,
+                    StudentName = g.Student.FirstName + " " + g.Student.LastName,
+                    DisciplineId = g.DisciplineId,
                     DisciplineName = g.Discipline.Name,
                     Value = g.Value,
                     Date = g.Date
@@ -112,13 +196,16 @@ namespace University_System.UniversityManagementSystem.Core.Services
         public async Task<IEnumerable<GradeDetailsDto>> GetByDisciplineAsync(int disciplineId)
         {
             return await _context.Grades
-                .Where(g => g.DisciplineId == disciplineId)
+                .Where(g => !g.IsDeleted && g.DisciplineId == disciplineId)
                 .Include(g => g.Student)
+                .Include(g => g.Discipline)
                 .Select(g => new GradeDetailsDto
                 {
                     Id = g.Id,
+                    StudentId = g.StudentId,
                     StudentName = g.Student.FirstName + " " + g.Student.LastName,
-                    DisciplineName = "",
+                    DisciplineId = g.DisciplineId,
+                    DisciplineName = g.Discipline.Name,
                     Value = g.Value,
                     Date = g.Date
                 })

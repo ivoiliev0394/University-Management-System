@@ -15,17 +15,28 @@ export default function GradeEdit() {
         setForm({
           studentId: data.studentId,
           disciplineId: data.disciplineId,
-          value: data.value
+          value: data.value,
+          // ⬇️ HTML date input иска YYYY-MM-DD
+          date: data.date
+            ? data.date.substring(0, 10)
+            : ''
         });
       })
       .catch(() => setError('Grade not found'));
   }, [id]);
 
   const onChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: Number(e.target.value)
-    });
+    const { name, value } = e.target;
+
+    setForm(state => ({
+      ...state,
+      [name]:
+        name === 'studentId' || name === 'disciplineId'
+          ? Number(value)
+          : name === 'value'
+          ? Number(value)
+          : value
+    }));
   };
 
   const onSubmit = async (e) => {
@@ -33,7 +44,12 @@ export default function GradeEdit() {
     setError('');
 
     try {
-      await updateGrade(id, form);
+      await updateGrade(id, {
+        ...form,
+        // ⬇️ back-end очаква DateTime
+        date: new Date(form.date).toISOString()
+      });
+
       navigate(`/grades/${id}`);
     } catch (err) {
       setError(err.message || 'Update failed');
@@ -43,49 +59,63 @@ export default function GradeEdit() {
   if (!form) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h1>Edit Grade</h1>
+    <div className="container">
+      <h1 className="mb-3">Edit Grade</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+       {/* 🔙 Back */}
+      <button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <label>Student ID</label><br />
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      <form onSubmit={onSubmit} className="col-md-6">
+
+        <div className="mb-3">
+          <label className="form-label">Student ID</label>
           <input
             type="number"
             name="studentId"
+            className="form-control"
             value={form.studentId}
             onChange={onChange}
             required
           />
         </div>
 
-        <div>
-          <label>Discipline ID</label><br />
+        <div className="mb-3">
+          <label className="form-label">Discipline ID</label>
           <input
             type="number"
             name="disciplineId"
+            className="form-control"
             value={form.disciplineId}
             onChange={onChange}
             required
           />
         </div>
 
-        <div>
-          <label>Grade</label><br />
+        <div className="mb-3">
+          <label className="form-label">Grade</label>
           <input
             type="number"
             name="value"
             min="2"
             max="6"
             step="0.01"
+            className="form-control"
             value={form.value}
             onChange={onChange}
             required
           />
         </div>
 
-        <button type="submit">Save</button>
+        <button className="btn btn-primary">
+          Save
+        </button>
       </form>
     </div>
   );

@@ -36,21 +36,90 @@ export default function TeacherCreate() {
   };
 
   return (
-    <div>
-      <h1>Create Teacher</h1>
+    <div className="container">
+      <h1 className="mb-3">Create Teacher</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* 🔙 Back */}
+      <button
+        className="btn btn-secondary mb-3"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
 
-      <form onSubmit={onSubmit}>
-        <input name="email" placeholder="Email" onChange={onChange} required /> <br /> <br />
-        <input name="password" type="password" placeholder="Password" onChange={onChange} required /><br /> <br />
+      {error && <div className="alert alert-danger">{error}</div>}
 
-        <input name="name" placeholder="Full Name" onChange={onChange} required /><br /> <br />
-        <input name="title" placeholder="Title" onChange={onChange} /><br /> <br />
-        <input name="department" placeholder="Department" onChange={onChange} /><br /> <br />
-        <input name="phone" placeholder="Phone" onChange={onChange} /><br /> <br />
+      <form onSubmit={onSubmit} className="col-md-6">
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="form-control"
+            value={form.email}
+            onChange={onChange}
+            required
+          />
+        </div>
 
-        <button type="submit">Create</button>
+        <div className="mb-3">
+          <label className="form-label">Password</label>
+          <input
+            name="password"
+            type="password"
+            className="form-control"
+            value={form.password}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <hr />
+
+        <div className="mb-3">
+          <label className="form-label">Full Name</label>
+          <input
+            name="name"
+            className="form-control"
+            value={form.name}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Title</label>
+          <input
+            name="title"
+            className="form-control"
+            value={form.title}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Department</label>
+          <input
+            name="department"
+            className="form-control"
+            value={form.department}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Phone</label>
+          <input
+            name="phone"
+            className="form-control"
+            value={form.phone}
+            onChange={onChange}
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary">
+          Create Teacher
+        </button>
       </form>
     </div>
   );
