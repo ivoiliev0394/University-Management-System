@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getAllDisciplines, getDisciplinesByMyMajor, deleteDiscipline } from '../api/disciplineApi';
-import { useAuth } from '../contexts/AuthContext';
+import { getAllDisciplines, getDisciplinesByMyMajor, deleteDiscipline } from '../../api/disciplineApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Disciplines() {
   const { user } = useAuth();

@@ -3,25 +3,26 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 import Home from './pages/Home';
-import Students from './pages/Students';
-import StudentEdit from './pages/StudentEdit';
-import StudentDetails from './pages/StudentDetails';
-import StudentCreate from './pages/StudentCreate';
 
-import Teachers from './pages/Teachers';
-import TeacherEdit from './pages/TeacherEdit';
-import TeacherCreate from './pages/TeacherCreate';
-import TeacherDetails from './pages/TeacherDetails';
+import Students from './pages/students/Students';
+import StudentEdit from './pages/students/StudentEdit';
+import StudentDetails from './pages/students/StudentDetails';
+import StudentCreate from './pages/students/StudentCreate';
 
-import Disciplines from './pages/Disciplines';
-import DisciplineCreate from './pages/DisciplineCreate';
-import DisciplineEdit from './pages/DisciplineEdit';
-import DisciplineDetails from './pages/DisciplineDetails';
+import Teachers from './pages/teachers/Teachers';
+import TeacherEdit from './pages/teachers/TeacherEdit';
+import TeacherCreate from './pages/teachers/TeacherCreate';
+import TeacherDetails from './pages/teachers/TeacherDetails';
 
-import Grades from './pages/Grades';
-import GradeCreate from './pages/GradeCreate';
-import GradeEdit from './pages/GradeEdit';
-import GradeDetails from './pages/GradeDetails';
+import Disciplines from './pages/disciplines/Disciplines';
+import DisciplineCreate from './pages/disciplines/DisciplineCreate';
+import DisciplineEdit from './pages/disciplines/DisciplineEdit';
+import DisciplineDetails from './pages/disciplines/DisciplineDetails';
+
+import Grades from './pages/grades/Grades';
+import GradeCreate from './pages/grades/GradeCreate';
+import GradeEdit from './pages/grades/GradeEdit';
+import GradeDetails from './pages/grades/GradeDetails';
 
 import StudentReport from './pages/reports/StudentReport';
 import ReportsDashboard from './pages/reports/ReportsDashboard';
@@ -36,6 +37,8 @@ import NotFound from './pages/NotFound';
 import MyProfile from './pages/MyProfile';
 import Users from './pages/Users';
 import UserProfile from './pages/UserProfile';
+import PublicDisciplines from './pages/PublicDisciplines';
+import Contact from './pages/Contact';
 
 import PrivateGuard from './guards/PrivateGuard';
 import RoleGuard from './guards/RoleGuard';
@@ -51,6 +54,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/disciplines/public" element={<PublicDisciplines />} />
+          <Route path="/contact" element={<Contact />} />
 
           {/* My Profile */}
           <Route

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getGradeById } from '../api/gradeApi';
+import { getGradeById } from '../../api/gradeApi';
 
 export default function GradeDetails() {
   const { id } = useParams();

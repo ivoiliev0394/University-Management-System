@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createGrade } from '../api/gradeApi';
-import { getAllStudents } from '../api/studentApi';
-import { getAllDisciplines } from '../api/disciplineApi';
+import { createGrade } from '../../api/gradeApi';
+import { getAllStudents } from '../../api/studentApi';
+import { getAllDisciplines } from '../../api/disciplineApi';
 
 export default function GradeCreate() {
   const navigate = useNavigate();

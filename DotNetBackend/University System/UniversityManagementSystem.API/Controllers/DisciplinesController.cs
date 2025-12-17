@@ -21,6 +21,7 @@ namespace University_System.UniversityManagementSystem.API.Controllers
             
         }
         [Authorize(Roles = "Admin,Teacher")]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
             => Ok(await _disciplineService.GetAllAsync());

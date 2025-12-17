@@ -1,32 +1,26 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import {
-  getDisciplineById,
-  updateDiscipline
-} from '../api/disciplineApi';
-import { getAllTeachers } from '../api/teacherApi';
+import { useNavigate } from 'react-router-dom';
+import { createDiscipline } from '../../api/disciplineApi';
+import { getAllTeachers } from '../../api/teacherApi';
 
-export default function DisciplineEdit() {
-  const { id } = useParams();
+export default function DisciplineCreate() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    semester: 1,
+    credits: 1,
+    teacherId: ''
+  });
+
   const [teachers, setTeachers] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([
-      getDisciplineById(id),
-      getAllTeachers()
-    ])
-      .then(([disciplineData, teachersData]) => {
-        setForm(disciplineData);
-        setTeachers(teachersData);
-      })
-      .catch(() => setError('Failed to load data'));
-  }, [id]);
-
-  if (!form) return <p>Loading...</p>;
+    getAllTeachers()
+      .then(setTeachers)
+      .catch(() => setError('Failed to load teachers'));
+  }, []);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -45,16 +39,16 @@ export default function DisciplineEdit() {
     setError('');
 
     try {
-      await updateDiscipline(id, form);
-      navigate(`/disciplines/${id}`);
+      await createDiscipline(form);
+      navigate('/disciplines');
     } catch (err) {
-      setError(err.message || 'Update failed');
+      setError(err.message || 'Create failed');
     }
   };
 
   return (
     <div className="container">
-      <h1 className="mb-4">Edit Discipline</h1>
+      <h1 className="mb-4">Create Discipline</h1>
 
       {/* 🔙 Back */}
       <button
@@ -83,9 +77,9 @@ export default function DisciplineEdit() {
           <input
             className="form-control"
             type="number"
-            name="semester"
             min="1"
             max="8"
+            name="semester"
             value={form.semester}
             onChange={onChange}
             required
@@ -110,7 +104,7 @@ export default function DisciplineEdit() {
           <select
             className="form-select"
             name="teacherId"
-            value={form.teacherId || ''}
+            value={form.teacherId}
             onChange={onChange}
             required
           >
@@ -123,7 +117,7 @@ export default function DisciplineEdit() {
           </select>
         </div>
 
-        <button className="btn btn-primary">Save</button>
+        <button className="btn btn-success">Create</button>
       </form>
     </div>
   );

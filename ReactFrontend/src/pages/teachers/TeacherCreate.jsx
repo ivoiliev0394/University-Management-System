@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createTeacher } from '../api/teacherApi';
+import { createTeacher } from '../../api/teacherApi';
 
 export default function TeacherCreate() {
   const navigate = useNavigate();

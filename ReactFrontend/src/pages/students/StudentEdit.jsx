@@ -1,25 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getTeacherById, updateTeacher } from '../api/teacherApi';
+import { getStudentById, updateStudent } from '../../api/studentApi';
+import { useAuth } from '../../contexts/AuthContext';
 
-export default function TeacherEdit() {
+export default function StudentEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   const [form, setForm] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getTeacherById(id)
+    getStudentById(id, token)
       .then(data => setForm(data))
-      .catch(() => setError('Teacher not found'));
-  }, [id]);
+      .catch(() => setError('Student not found'));
+  }, [id, token]);
 
   const onChange = (e) => {
-    setForm({
-      ...form,
+    setForm(state => ({
+      ...state,
       [e.target.name]: e.target.value
-    });
+    }));
   };
 
   const onSubmit = async (e) => {
@@ -27,8 +29,8 @@ export default function TeacherEdit() {
     setError('');
 
     try {
-      await updateTeacher(id, form);
-      navigate('/teachers');
+      await updateStudent(id, form, token);
+      navigate(`/students/${id}`);
     } catch (err) {
       setError(err.message || 'Error while saving');
     }
@@ -38,7 +40,7 @@ export default function TeacherEdit() {
 
   return (
     <div className="container">
-      <h1 className="mb-3">Edit Teacher</h1>
+      <h1 className="mb-3">Edit Student</h1>
 
       {/* 🔙 Back */}
       <button
@@ -52,33 +54,68 @@ export default function TeacherEdit() {
 
       <form onSubmit={onSubmit} className="col-md-6">
         <div className="mb-3">
-          <label className="form-label">Name</label>
+          <label className="form-label">Faculty Number</label>
           <input
-            name="name"
+            name="facultyNumber"
             className="form-control"
-            value={form.name || ''}
+            value={form.facultyNumber || ''}
             onChange={onChange}
             required
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Title</label>
+          <label className="form-label">First Name</label>
           <input
-            name="title"
+            name="firstName"
             className="form-control"
-            value={form.title || ''}
+            value={form.firstName || ''}
             onChange={onChange}
             required
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Department</label>
+          <label className="form-label">Middle Name</label>
           <input
-            name="department"
+            name="middleName"
             className="form-control"
-            value={form.department || ''}
+            value={form.middleName || ''}
+            onChange={onChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Last Name</label>
+          <input
+            name="lastName"
+            className="form-control"
+            value={form.lastName || ''}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Major</label>
+          <input
+            name="major"
+            className="form-control"
+            value={form.major || ''}
+            onChange={onChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Course</label>
+          <input
+            type="number"
+            name="course"
+            className="form-control"
+            min="1"
+            max="6"
+            value={form.course ?? 1}
             onChange={onChange}
             required
           />
@@ -97,11 +134,11 @@ export default function TeacherEdit() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Phone</label>
+          <label className="form-label">Address</label>
           <input
-            name="phone"
+            name="address"
             className="form-control"
-            value={form.phone || ''}
+            value={form.address || ''}
             onChange={onChange}
             required
           />

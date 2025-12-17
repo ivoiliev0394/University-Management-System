@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getStudentById } from '../api/studentApi';
-import { useAuth } from '../contexts/AuthContext';
+import { getStudentById } from '../../api/studentApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function StudentDetails() {
   const { id } = useParams();

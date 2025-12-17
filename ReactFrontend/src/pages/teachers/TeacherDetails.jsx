@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTeacherById } from '../api/teacherApi';
+import { getTeacherById } from '../../api/teacherApi';
 
 export default function TeacherDetails() {
   const { id } = useParams();

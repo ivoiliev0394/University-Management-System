@@ -2,9 +2,11 @@
 .vs/
 **/.vs/
 
+
 # .NET
 **/bin/
 **/obj/
+
 
 # React
 university-management-client/node_modules/

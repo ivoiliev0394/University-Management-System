@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllGrades, deleteGrade } from '../api/gradeApi';
-import { useAuth } from '../contexts/AuthContext';
+import { getAllGrades, deleteGrade } from '../../api/gradeApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Grades() {
   const { user } = useAuth();

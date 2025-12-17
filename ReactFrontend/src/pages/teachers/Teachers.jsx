@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getAllTeachers, deleteTeacher } from '../api/teacherApi';
-import { useAuth } from '../contexts/AuthContext';
+import { getAllTeachers, deleteTeacher } from '../../api/teacherApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Teachers() {
   const { user } = useAuth();

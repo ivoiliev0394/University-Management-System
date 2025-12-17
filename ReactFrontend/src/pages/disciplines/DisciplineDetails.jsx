@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getDisciplineById } from '../api/disciplineApi';
+import { getDisciplineById } from '../../api/disciplineApi';
 
 export default function DisciplineDetails() {
   const { id } = useParams();

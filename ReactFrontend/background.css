@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+
+  background: linear-gradient(
+    270deg,
+    #ffffff,
+    #c9f7ee,
+    #9fead9,
+    #c9f7ee,
+    #ffffff
+  );
+
+  background-size: 400% 400%;
+  animation: mintFlowFAST 5s linear infinite;
+}
+
+@keyframes mintFlowFAST {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+

@@ -37,6 +37,24 @@ export default function Header() {
         <div className="collapse navbar-collapse" id="mainNavbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
 
+             
+
+              {!isAuthenticated && (
+                <> 
+                <li className="nav-item">
+                  <Link className="nav-link" to="/disciplines/public">
+                    Disciplines
+                  </Link>
+                </li>
+                <li className="nav-item">
+                <Link className="nav-link" to="/contact">
+                  Contact
+                </Link>
+              </li>
+              </>
+                
+              )}
+
             {isAuthenticated && (
               <>
                 <li className="nav-item">
