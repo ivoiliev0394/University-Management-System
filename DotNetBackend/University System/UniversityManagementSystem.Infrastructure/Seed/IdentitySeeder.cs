@@ -47,12 +47,7 @@ namespace University_System.UniversityManagementSystem.Infrastructure.Seed
                 password: "Admin123!",
                 role: "Admin"
             );
-            await CreateUserIfNotExistsAsync(
-                userManager,
-                email: "ivo@gmail.com",
-                password: "Ivo123!",
-                role: "Admin"
-            );
+           
         }
 
         private static async Task SeedTeachersAsync(UserManager<ApplicationUser> userManager)
